@@ -109,6 +109,8 @@ class CustomerController @Inject() (ws: WSClient, config: Configuration) extends
     val rawSql = RawSqlBuilder.parse("SELECT first_name, last_name FROM customer WHERE id = :id").create
     val query = CustomerController.db.find(classOf[Customer])
     query.setRawSql(rawSql)
+    // Bind the validated id parameter to the SQL query to prevent injection
+    query.setParameter("id", id)
     query.setParameter("id", id)
     val customer = query.findList.asScala
     if (null == customer || customer.isEmpty) throw new CustomerNotFoundException
